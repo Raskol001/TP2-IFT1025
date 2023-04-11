@@ -2,14 +2,9 @@ package server;
 
 import javafx.util.Pair;
 import server.models.Course;
+import server.models.RegistrationForm;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -100,7 +95,7 @@ public class Server {
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
-    public void handleLoadCourses(String arg) throws IOException{
+    public void handleLoadCourses(String arg){
 
         
         BufferedReader reader = null;
@@ -135,6 +130,7 @@ public class Server {
             reader.close();
 
             FileOutputStream fileOutputStream = new FileOutputStream("CoursDeLaSessionDemandee.txt");
+            //On sérialise : 
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
 
             for(Course course : allCourses){
@@ -145,6 +141,7 @@ public class Server {
 
             }
             objectOutputStream.close();
+            fileOutputStream.close();
 
         }catch (FileNotFoundException e){
             System.out.println("File not found: " + e.getMessage());
@@ -163,6 +160,26 @@ public class Server {
      La méthode gére les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
      */
     public void handleRegistration() {
-        // TODO: implémenter cette méthode
+        
+        try {
+
+            ObjectInputStream registration = new ObjectInputStream(objectInputStream);
+            RegistrationForm registrationForm = (RegistrationForm) registration.readObject();
+            registration.close();
+
+            FileWriter inscription = new FileWriter("inscription.txt");
+            BufferedWriter writer = new BufferedWriter(inscription);
+            inscription.write(registrationForm.toString()+"\n");
+
+            inscription.close();
+            writer.flush();
+
+            System.out.println("inscription enregistree");
+
+        } catch (IOException ioException){
+            System.out.println("Erreur à l'ouverture du fichier");
+        } catch (ClassNotFoundException classNotFoundException){
+            System.out.println("Erreur: ClassNotFoundException");
+        }
     }
 }
