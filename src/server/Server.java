@@ -1,6 +1,7 @@
 package server;
 
 import javafx.util.Pair;
+import server.models.RegistrationForm;
 import server.models.Course;
 import server.models.RegistrationForm;
 
@@ -8,12 +9,13 @@ import java.io.*;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import java.io.*;
+
 import java.util.List;
 
-import javax.imageio.IIOException;
 
 public class Server {
 
