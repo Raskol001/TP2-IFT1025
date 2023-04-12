@@ -34,13 +34,6 @@ public class Client {
             //faire boucler le scanner afin que le client entre ses choix successivement.
             String command = scanner.nextLine();
             scanner.close();
-
-            // Send event command to the server
-            //envoyer les commandes au server 
-            out.writeObject("CHARGER");
-            out.writeObject("INSCRIRE");
-            out.flush();
-            //in.readObject().
             
             // Receive response from the server
             String response = (String)in.readObject();
@@ -58,22 +51,19 @@ public class Client {
         
     }
     public void inscription(String codeCours,String nomCours,String session, 
-                            String nom, String prenom, String email, String matricule){
+                    String nom, String prenom, String email, String matricule){
 
+        //On créé le cours auquel veut s'inscrire l'étudiant
         Course course = new Course(codeCours, nomCours, session);
-        try {
-            out.writeObject("CHARGER " + session);
-            out.flush();
-            if(in.readObject().equals(course )){
-                out.writeObject("INSCRIRE ");
-                RegistrationForm form = new RegistrationForm(nom, prenom, email, matricule, course);
-                out.writeObject(form);
-                out.flush();
-            }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        //Envoyer commande au server.
+        out.writeObject("INSCRIRE");
+        RegistrationForm form = new RegistrationForm(nom, prenom, email, matricule, course);
+        out.writeObject(form);
+        out.flush();
+
+        //On affiche ce que retourne la méthode handleRegistration
+        system.out.println(in.readObject());
 
     }
 }

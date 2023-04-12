@@ -111,6 +111,9 @@ public class Server {
             //Création de la liste d'objets qui va contenir tous les cours.
             List<Course> allCourses = new ArrayList<>();
 
+            //Création de la liste qui va contenir les cours de la session demandée
+            List<Course> filteredCourses = new ArrayList<>();
+
             String line = reader.readLine();
             while(line != null){
 
@@ -131,19 +134,21 @@ public class Server {
 
             reader.close();
 
-            FileOutputStream fileOutputStream = new FileOutputStream("CoursDeLaSessionDemandee.txt");
+            //On envoie le flux de sortie vers le socket
+            OutputStream outputStream = client.getOutputStream();
+
             //On sérialise : 
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
 
             for(Course course : allCourses){
+                //On parcours la liste de tous le cours et on filtre selon la session
                 if (course.getSession().equals(arg)){
-                    objectOutputStream.writeObject(course);
-
+                    filteredCourses.add(course);
                 }
-
             }
+            objectOutputStream.writeObject(filteredCourses);
+
             objectOutputStream.close();
-            fileOutputStream.close();
 
         }catch (FileNotFoundException e){
             System.out.println("File not found: " + e.getMessage());
@@ -162,26 +167,91 @@ public class Server {
      La méthode gére les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
      */
     public void handleRegistration() {
-        
         try {
 
-            ObjectInputStream registration = new ObjectInputStream(objectInputStream);
-            RegistrationForm registrationForm = (RegistrationForm) registration.readObject();
-            registration.close();
+            // Récupération de l'objet RegistrationForm envoyé par le client
+            RegistrationForm form = (RegistrationForm) objectInputStream.readObject();
 
-            FileWriter inscription = new FileWriter("inscription.txt");
-            BufferedWriter writer = new BufferedWriter(inscription);
-            inscription.write(registrationForm.toString()+"\n");
+            String sessionCours = form.getCourse().getSession();
+            String nomCours = form.getCourse().getName();
+            String codeCours = form.getCourse().getCode();
 
-            inscription.close();
-            writer.flush();
+            //On créé une instance du cours
+            Course coursDemande = new Course(nomCours, codeCours, sessionCours);
 
-            System.out.println("inscription enregistree");
+            //On récupére la liste de cours disponible à cette session
+            objectOutputStream.writeObject("CHARGER " + sessionCours);
+            objectOutputStream.flush();
+            List<Course> coursDisponibles = (List<Course>) objectInputStream.readObject();
 
-        } catch (IOException ioException){
-            System.out.println("Erreur à l'ouverture du fichier");
-        } catch (ClassNotFoundException classNotFoundException){
-            System.out.println("Erreur: ClassNotFoundException");
+            //On vérifie si le cours existe à cette session
+            if (coursDisponibles.contains(coursDemande)){
+
+                //On récupère la liste des cours inscrit de l'étudiant
+                ArrayList<String> listCodeCoursInscrits = extraireCoursDejaInscrits(sessionCours);
+
+                //On  vérifie si l'étudiant n'est pas déja inscrit au cours
+                for(String code : listCodeCoursInscrits){
+                    if(code == codeCours){
+
+                        objectOutputStream.writeChars("erreur: cours déjà inscrit");
+                    }
+                    else{
+                        //On inscrit le cours à la liste des cours inscrits de l'étudiant
+                        inscriptionCours(form);
+                    }
+                }
+            }
+            else{
+                objectOutputStream.writeChars("Cours indisponible à la session demandée");
+            }
+    
+        } catch (IOException e) {
+            System.out.println("Erreur lors de l'envoi du message de confirmation : " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.out.println("Erreur lors de la récupération de l'objet RegistrationForm : " + e.getMessage());
+        }
+    }
+
+    private void inscriptionCours(RegistrationForm form) throws IOException {
+        FileWriter inscription = new FileWriter("inscription.txt", true);
+        BufferedWriter writer = new BufferedWriter(inscription);
+        inscription.write(form.toString());
+        objectOutputStream.writeChars("inscription réussie");
+
+        inscription.close();
+        writer.close();
+    }
+
+    private ArrayList<String> extraireCoursDejaInscrits(String sessionCours) throws FileNotFoundException, IOException {
+        try{
+            FileReader fileReader = new FileReader("inscription.txt");
+            BufferedReader reader = new BufferedReader(fileReader);
+
+            ArrayList<String> listCodeCoursInscrits = new ArrayList<>();
+            String coursInscrits = reader.readLine();
+            while(coursInscrits != null){
+
+                String [] elements = coursInscrits.split("\t");
+                String session = elements[0];
+                String code = elements[1];
+
+                //On filtre pour obtenir les cours de la meme session
+                //que celle du cours auquel l'étudiant veut s'inscrire
+                if(session == sessionCours){
+                    listCodeCoursInscrits.add(code);
+                }
+
+                //On passe à la ligne suivante
+                coursInscrits = reader.readLine();
+            }
+            reader.close();
+
+            return listCodeCoursInscrits;
+
+        }catch(IOException e){
+            System.out.println("Erreur lors de la lecture du fichier inscription.txt : " + e.getMessage());
+            return null;
         }
     }
 }
