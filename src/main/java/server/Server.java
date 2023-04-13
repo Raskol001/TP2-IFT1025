@@ -1,8 +1,8 @@
 package server;
 
 import javafx.util.Pair;
-import server.models.RegistrationForm;
 import server.models.Course;
+import server.models.RegistrationForm;
 
 import java.io.*;
 

@@ -13,16 +13,16 @@ import server.models.RegistrationForm;
 
 
 
-public class Client2 {
+public class Client {
     public static final String SERVER_ADRESS = "127.0.0.1";
-    public static final int SERVER_PORT = 1338;
+    public static final int SERVER_PORT = 1337;
     private Socket clientSocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
     public String session = "Automne"; 
 
 
-    public Client2(){
+    public Client(){
         try {
             this.clientSocket = new Socket(SERVER_ADRESS, SERVER_PORT);
 
@@ -35,6 +35,8 @@ public class Client2 {
         }catch (IOException  e) {
             e.printStackTrace();
         }
+
+        if (out == null ) System.err.println("Out null");
         
     }
     public String postForm(RegistrationForm form){

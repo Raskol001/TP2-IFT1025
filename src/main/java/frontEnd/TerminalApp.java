@@ -1,6 +1,6 @@
 package frontEnd;
 
-import client.Client2;
+import client.Client;
 import server.models.Course;
 
 import java.io.BufferedReader;
@@ -32,7 +32,7 @@ public class TerminalApp {
 
     public static void main(String[] args) throws IOException {
 
-        Client2 client = new Client2();
+        Client client = new Client();
 
         // Envoie au server les lignes tapées sur la console.
         BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
@@ -96,7 +96,7 @@ public class TerminalApp {
         }
     }
 
-    private static ArrayList<Course> getCLoad(Client2 client, String MSG, String session) {
+    private static ArrayList<Course> getCLoad(Client client, String MSG, String session) {
         ArrayList<Course> sessionCourseLoad;
         System.out.println(MSG);
         sessionCourseLoad = client.getCoursList(session);
@@ -104,7 +104,7 @@ public class TerminalApp {
         return sessionCourseLoad;
     }
 
-    public static ArrayList<Course> getCourseLoad(String choix, Client2 client) {
+    public static ArrayList<Course> getCourseLoad(String choix, Client client) {
 
         ArrayList<Course> sessionCourseLoad;
 
