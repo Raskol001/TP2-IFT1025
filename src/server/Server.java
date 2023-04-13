@@ -3,7 +3,6 @@ package server;
 import javafx.util.Pair;
 import server.models.RegistrationForm;
 import server.models.Course;
-import server.models.RegistrationForm;
 
 import java.io.*;
 
@@ -12,7 +11,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import java.io.*;
 
 import java.util.List;
 
@@ -99,14 +97,10 @@ public class Server {
      */
     public void handleLoadCourses(String arg){
 
-        
-        BufferedReader reader = null;
-        try {
+        try (BufferedReader reader = new BufferedReader(new FileReader("./data/cours.txt"))) {
 
             // /!\ le chemin du fichier cours.txt peut causer une erreur 
             //Lecture du fichier cours.txt
-            FileReader cours = new FileReader("cours.txt");
-            reader = new BufferedReader(cours);
 
             //Création de la liste d'objets qui va contenir tous les cours.
             List<Course> allCourses = new ArrayList<>();
@@ -114,8 +108,8 @@ public class Server {
             //Création de la liste qui va contenir les cours de la session demandée
             List<Course> filteredCourses = new ArrayList<>();
 
-            String line = reader.readLine();
-            while(line != null){
+            String line;
+            while(( line = reader.readLine()) != null ) {
 
                 //On créé un tableau contenant les éléments de chaque ligne
                 String [] elements = line.split("\t");
@@ -129,16 +123,7 @@ public class Server {
                 Course course = new Course(nom, code, session);
                 allCourses.add(course);
                 
-                line = reader.readLine();
             }
-
-            reader.close();
-
-            //On envoie le flux de sortie vers le socket
-            OutputStream outputStream = client.getOutputStream();
-
-            //On sérialise : 
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
 
             for(Course course : allCourses){
                 //On parcours la liste de tous le cours et on filtre selon la session
@@ -146,9 +131,7 @@ public class Server {
                     filteredCourses.add(course);
                 }
             }
-            objectOutputStream.writeObject(filteredCourses);
-
-            objectOutputStream.close();
+            this.objectOutputStream.writeObject(filteredCourses);
 
         }catch (FileNotFoundException e){
             System.out.println("File not found: " + e.getMessage());
@@ -166,6 +149,7 @@ public class Server {
      et renvoyer un message de confirmation au client.
      La méthode gére les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
      */
+    @SuppressWarnings("unchecked")
     public void handleRegistration() {
         try {
 
@@ -182,6 +166,7 @@ public class Server {
             //On récupére la liste de cours disponible à cette session
             objectOutputStream.writeObject("CHARGER " + sessionCours);
             objectOutputStream.flush();
+
             List<Course> coursDisponibles = (List<Course>) objectInputStream.readObject();
 
             //On vérifie si le cours existe à cette session
@@ -190,20 +175,26 @@ public class Server {
                 //On récupère la liste des cours inscrit de l'étudiant
                 ArrayList<String> listCodeCoursInscrits = extraireCoursDejaInscrits(sessionCours);
 
+                Boolean estDejaInscrit = false;
+
                 //On  vérifie si l'étudiant n'est pas déja inscrit au cours
                 for(String code : listCodeCoursInscrits){
-                    if(code == codeCours){
-
-                        objectOutputStream.writeChars("erreur: cours déjà inscrit");
+                    if(code.equals(codeCours)){
+                        estDejaInscrit = true;
+                        break;
                     }
-                    else{
-                        //On inscrit le cours à la liste des cours inscrits de l'étudiant
-                        inscriptionCours(form);
-                    }
+                }
+                
+                if(estDejaInscrit){
+                    objectOutputStream.writeObject("erreur: cours déjà inscrit");
+                }
+                else{
+                    //On inscrit le cours à la liste des cours inscrits de l'étudiant
+                    inscriptionCours(form);
                 }
             }
             else{
-                objectOutputStream.writeChars("Cours indisponible à la session demandée");
+                objectOutputStream.writeObject("Cours indisponible à la session demandée");
             }
     
         } catch (IOException e) {
@@ -214,7 +205,7 @@ public class Server {
     }
 
     private void inscriptionCours(RegistrationForm form) throws IOException {
-        FileWriter inscription = new FileWriter("inscription.txt", true);
+        FileWriter inscription = new FileWriter("./data/inscription.txt", true);
         BufferedWriter writer = new BufferedWriter(inscription);
         inscription.write(form.toString());
         objectOutputStream.writeChars("inscription réussie");
@@ -225,7 +216,7 @@ public class Server {
 
     private ArrayList<String> extraireCoursDejaInscrits(String sessionCours) throws FileNotFoundException, IOException {
         try{
-            FileReader fileReader = new FileReader("inscription.txt");
+            FileReader fileReader = new FileReader("./data/inscription.txt");
             BufferedReader reader = new BufferedReader(fileReader);
 
             ArrayList<String> listCodeCoursInscrits = new ArrayList<>();
