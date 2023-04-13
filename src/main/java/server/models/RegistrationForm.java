@@ -59,6 +59,12 @@ public class RegistrationForm implements Serializable {
 
     @Override
     public String toString() {
-        return "InscriptionForm{" + "prenom='" + prenom + '\'' + ", nom='" + nom + '\'' + ", email='" + email + '\'' + ", matricule='" + matricule + '\'' + ", course='" + course + '\'' + '}';
+        return "\n"
+        + course.getSession() + "\t" 
+        + course.getCode() + "\t" 
+        + matricule + "\t"
+        + prenom + "\t" 
+        + nom + "\t" 
+        + email;
     }
 }

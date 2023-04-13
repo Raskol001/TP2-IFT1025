@@ -30,10 +30,14 @@ public class TerminalApp {
     private final static String COURS_ETE = "Les cours offerts pendant la session d'été sont: \n";
     private final static String COURS_INVALIDE = "erreur: choix invalide, veuillez choisir entre choix existants\n";
 
-    public static void main(String[] args) throws IOException {
 
-        Client client = new Client();
+    ClientInterface client = null;
 
+    public TerminalApp(ClientInterface client) {
+        this.client = client;
+    }
+
+    public void run(String[] args) throws IOException {
         // Envoie au server les lignes tapées sur la console.
         BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
         // accueil bienvenue au portal
@@ -41,29 +45,13 @@ public class TerminalApp {
 
         Boolean finished = false;
         while (!finished) {
-
             // MENU 1
-
             System.out.println(CHOIX_SESSION);
             String choixSession = keyboard.readLine();
-
             ArrayList<Course> sessionCourseLoad = null;
-
-            switch (choixSession) {
-                case "1":
-                sessionCourseLoad = getCLoad(client, COURS_AUTOMNE, "Automne");
-                   
-                case "2":
-                sessionCourseLoad = getCLoad(client, COURS_HIVER, "Hiver");
-                   
-                case "3":
-                sessionCourseLoad = getCLoad(client, COURS_ETE, "Ete");     
-                default:
-                    System.out.println(COURS_INVALIDE);
-            }
+            sessionCourseLoad = handleSessionChoice(choixSession, sessionCourseLoad);
 
             // MENU 2
-
             System.out.println(OPTIONS);
             String choix_menu2 = keyboard.readLine();
 
@@ -87,54 +75,51 @@ public class TerminalApp {
                 String code = keyboard.readLine();
 
                 Course cours = client.getACourse(sessionCourseLoad, code);
+                
+                String server_response = client.inscription(
+                    nom, prenom, email, matricule, cours);
 
-                System.out.println( client.inscription(nom, prenom, email, matricule, cours) ) ;
+                System.out.println(server_response);
                 finished = true;
             } else {
-                System.out.println("Wring choice!");
+                System.out.println("Wrong choice!");
             }
         }
     }
 
-    private static ArrayList<Course> getCLoad(Client client, String MSG, String session) {
-        ArrayList<Course> sessionCourseLoad;
-        System.out.println(MSG);
-        sessionCourseLoad = client.getCoursList(session);
-        printListCourses(sessionCourseLoad);
+    private ArrayList<Course> handleSessionChoice(
+            String choixSession,
+            ArrayList<Course> sessionCourseLoad) throws IOException {
+
+        switch (choixSession) {
+            case "1":
+            System.out.println(COURS_AUTOMNE);
+            sessionCourseLoad = getCourseLoad("Automne");
+            break;
+               
+            case "2":
+            System.out.println(COURS_HIVER);
+            sessionCourseLoad = getCourseLoad( "Hiver");
+            break;
+               
+            case "3":
+            System.out.println(COURS_ETE);
+            sessionCourseLoad = getCourseLoad( "Ete"); 
+            break;   
+
+            default:
+                System.out.println(COURS_INVALIDE);
+        }
         return sessionCourseLoad;
     }
 
-    public static ArrayList<Course> getCourseLoad(String choix, Client client) {
-
-        ArrayList<Course> sessionCourseLoad;
-
-        switch (choix) {
-            case "1":
-
-                System.out.println(COURS_AUTOMNE);
-                sessionCourseLoad = client.getCoursList("Automne");
-                printListCourses(sessionCourseLoad);
-                return sessionCourseLoad;
-            case "2":
-
-                System.out.println(COURS_HIVER);
-                sessionCourseLoad = client.getCoursList("Hiver");
-                printListCourses(sessionCourseLoad);
-                return sessionCourseLoad;
-            case "3":
-
-                System.out.println(COURS_ETE);
-                sessionCourseLoad = client.getCoursList("Ete");
-                printListCourses(sessionCourseLoad);
-                return sessionCourseLoad;
-            default:
-
-                System.out.println("erreur: choix invalide, veuillez choisir entre choix existants");
-                return null;
-        }
+    private ArrayList<Course> getCourseLoad(String session) throws IOException {
+        ArrayList<Course> sessionCourseLoad = client.getCoursList(session);
+        printCourses(sessionCourseLoad);
+        return sessionCourseLoad;
     }
 
-    private static void printListCourses(ArrayList<Course> list) {
+    private void printCourses(ArrayList<Course> list) {
         int indice = 0;
         for (Course course : list) {
             indice++;

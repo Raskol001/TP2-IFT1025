@@ -46,4 +46,12 @@ public class Course implements Serializable {
                 ", session=" + session +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        Course c = (Course) obj;
+        return this.code.equals(c.getCode());
+    }
+
+    
 }
