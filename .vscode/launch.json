@@ -1,0 +1,70 @@
+{
+    // Utilisez IntelliSense pour en savoir plus sur les attributs possibles.
+    // Pointez pour afficher la description des attributs existants.
+    // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "ServerLauncher",
+            "request": "launch",
+            "mainClass": "frontEnd/server.ServerLauncher",
+            "projectName": "Server"
+        },
+        {
+            "type": "java",
+            "name": "JavaFXApp",
+            "request": "launch",
+            "mainClass": "frontEnd/frontEnd.JavaFXApp",
+            "projectName": "Server"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "JavaFXApp",
+            "request": "launch",
+            "mainClass": "frontEnd.JavaFXApp",
+            "projectName": "Server"
+        },
+        {
+            "type": "java",
+            "name": "Launchr",
+            "request": "launch",
+            "mainClass": "frontEnd.Launchr",
+            "projectName": "Server"
+        },
+        {
+            "type": "java",
+            "name": "ServerLauncher",
+            "request": "launch",
+            "mainClass": "server.ServerLauncher",
+            "projectName": "Server"
+        },
+        {
+            "type": "java",
+            "name": "JavaFXApp(1)",
+            "request": "launch",
+            "mainClass": "main.java.frontEnd.JavaFXApp",
+            "projectName": "TP2-IFT1025_ec241d97"
+        },
+        {
+            "type": "java",
+            "name": "Launchr(1)",
+            "request": "launch",
+            "mainClass": "main.java.frontEnd.Launchr",
+            "projectName": "TP2-IFT1025_ec241d97"
+        },
+        {
+            "type": "java",
+            "name": "ServerLauncher(1)",
+            "request": "launch",
+            "mainClass": "main.java.server.ServerLauncher",
+            "projectName": "TP2-IFT1025_ec241d97"
+        }
+    ]
+}
