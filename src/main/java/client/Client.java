@@ -23,9 +23,6 @@ public class Client implements ClientInterface{
 
 
     public Client() throws IOException{
-        this.clientSocket = new Socket(SERVER_ADRESS, SERVER_PORT);
-        this.out = new ObjectOutputStream(clientSocket.getOutputStream());
-        this.in = new ObjectInputStream(clientSocket.getInputStream());
     }
 
 
@@ -58,8 +55,9 @@ public class Client implements ClientInterface{
     //l’envoie au client. Le client récupère les cours et les affiche.
     @SuppressWarnings("unchecked")
     @Override
-    public ArrayList<Course> getCoursList(String session){
+    public ArrayList<Course> getCoursList(String session) throws IOException{
         try{
+            this.connect();
             out.writeObject("CHARGER " + session);
             ArrayList<Course> coursList = (ArrayList<Course>) in.readObject();
 

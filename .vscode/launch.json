@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launchr",
+            "request": "launch",
+            "mainClass": "frontEnd/frontEnd.Launchr",
+            "projectName": "Server"
+        },
+        {
+            "type": "java",
             "name": "ServerLauncher",
             "request": "launch",
             "mainClass": "frontEnd/server.ServerLauncher",
