@@ -1,6 +1,5 @@
 package frontEnd;
 
-import client.Client;
 import server.models.Course;
 
 import java.io.BufferedReader;
