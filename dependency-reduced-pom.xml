@@ -46,10 +46,10 @@
           <compress>2</compress>
           <noHeaderFiles>true</noHeaderFiles>
           <noManPages>true</noManPages>
-          <launcher>Client</launcher>
-          <jlinkImageName>Client</jlinkImageName>
-          <jlinkZipName>Client-gui</jlinkZipName>
-          <mainClass>frontEnd.GUILauncher</mainClass>
+          <launcher>server</launcher>
+          <jlinkImageName>server</jlinkImageName>
+          <jlinkZipName>server-t</jlinkZipName>
+          <mainClass>server.ServerLauncher</mainClass>
         </configuration>
       </plugin>
       <plugin>
@@ -66,7 +66,7 @@
         <configuration>
           <transformers>
             <transformer>
-              <mainClass>frontEnd.GUILauncher</mainClass>
+              <mainClass>server.ServerLauncher</mainClass>
             </transformer>
           </transformers>
           <artifactSet>

@@ -156,7 +156,7 @@ public class Server {
     }
 
     private List<Course> getSessionCourseList(String arg) {
-        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/java/server/data/cours.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("./cours.txt"))) {
 
             // Création de la liste qui va contenir les cours de la session demandée
             List<Course> filteredCourses = new ArrayList<>();
@@ -240,7 +240,7 @@ public class Server {
     }
 
     private void inscriptionCours(RegistrationForm form) throws IOException {
-        FileWriter inscription = new FileWriter("src/main/java/server/data/inscription.txt", true);
+        FileWriter inscription = new FileWriter("./inscription.txt", true);
         BufferedWriter writer = new BufferedWriter(inscription);
         inscription.write(form.toString());
         objectOutputStream.writeObject("inscription réussie");
@@ -251,7 +251,7 @@ public class Server {
 
     private ArrayList<String> extraireCoursDejaInscrits(Course cours) throws FileNotFoundException, IOException {
         try {
-            FileReader fileReader = new FileReader("src/main/java/server/data/inscription.txt");
+            FileReader fileReader = new FileReader("./inscription.txt");
             BufferedReader reader = new BufferedReader(fileReader);
 
             ArrayList<String> listCodeCoursInscrits = new ArrayList<>();
