@@ -12,47 +12,30 @@ import server.models.Course;
 import server.models.RegistrationForm;
 
 
-
+/** classe simulant un client qui se connecte au serveur */
 public class Client implements ClientInterface{
+
+    /**adresse du serveur */
     public static final String SERVER_ADRESS = "127.0.0.1";
+
+    /** numéro du port */
     public static final int SERVER_PORT = 1337;
+
     private Socket clientSocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+
+    /**session de cours */
     public String session = "Automne"; 
 
 
-    public Client() throws IOException{
-    }
+    /**
+    * Récupère la liste des cours disponibles pour une session donnée.
+    * @param session la session pour laquelle on veut récupérer la liste des cours
+    * @return une ArrayList de Course contenant la liste des cours disponibles pour la session donnée
+    * @throws IOException si une erreur d'entrée/sortie se produit pendant la communication avec le serveur
+    */
 
-
-
-    @Override
-    public String postForm(RegistrationForm form){
-        try {
-            this.connect();
-
-            //Envoyer commande au server.
-            out.writeObject("INSCRIRE");
-            out.writeObject(form);
-
-            //On affiche ce que retourne la méthode handleRegistration
-
-            return (String) in.readObject();
-            
-        } catch (IOException e) {
-            System.err.println("Erreur d'entrée/sortie : " + e.getMessage());
-        } catch(ClassNotFoundException e){
-            System.err.println("Classe non trouvée : " + e.getMessage());
-        }
-
-        return null;
-    }
-
-    //une première fonctionnalité qui permet au client de récupérer la liste des
-    //cours disponibles pour une session donnée. Le client envoie une requête charger
-    //au serveur. Le serveur doit récupérer la liste des cours du fichier cours.txt et
-    //l’envoie au client. Le client récupère les cours et les affiche.
     @SuppressWarnings("unchecked")
     @Override
     public ArrayList<Course> getCoursList(String session) throws IOException{
@@ -75,6 +58,12 @@ public class Client implements ClientInterface{
         return null;
     }
 
+    /**
+    Retourne un objet Course correspondant à un code de cours donné, s'il existe dans la liste des cours.
+    @param listCourses une liste d'objets Course à parcourir pour trouver le cours correspondant au code.
+    @param code le code du cours que l'on recherche.
+    @return un objet Course correspondant au code donné, ou null si aucun cours ne correspond.
+    */
     @Override
     public Course getACourse(ArrayList<Course> listCourses, String code){
 
@@ -88,7 +77,17 @@ public class Client implements ClientInterface{
             return null;
         }
     }
-
+    /**
+    * Inscrire un étudiant à un cours spécifique.
+    *
+    * @param nom le nom de l'étudiant à inscrire
+    * @param prenom le prénom de l'étudiant à inscrire
+    * @param email l'adresse email de l'étudiant à inscrire
+    * @param matricule le matricule de l'étudiant à inscrire
+    * @param cours le cours auquel l'étudiant doit être inscrit
+    * @return une chaîne de caractères indiquant le résultat de l'inscription (par exemple, "Inscription réussie" ou "Cours complet")
+    * @throws IOException si une erreur d'entrée/sortie se produit pendant la communication avec le serveur
+    */
     @Override
     public String inscription(String nom, String prenom, String email, String matricule,
     Course cours) throws IOException{
