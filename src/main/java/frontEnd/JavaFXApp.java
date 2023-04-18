@@ -141,7 +141,7 @@ public class JavaFXApp extends Application {
         Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle("Avertissement");
         alert.setHeaderText(null);
-        alert.setContentText("Cours non sélectionné");
+        alert.setContentText(msg);
         alert.showAndWait();
     }
 }

@@ -3,3 +3,4 @@ Automne	IFT1227	B	B	B	B
 Hiver	IFT1025	Y	Y	Y	Y
 Hiver	IFT2125	122215	hehe	lala	lala@gmail.com
 Ete	IFT2256	58855	lulu	lili	lili@gmail.com
+Automne	IFT1015	12345678	cerise	pomme	cerise@gmail.com

@@ -56,6 +56,49 @@
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.0.2</version>
+               <executions>
+        <!-- Server jar -->
+        <execution>
+          <id>server-jar</id>
+          <phase>package</phase>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+          <configuration>
+            <classifier>server</classifier>
+            <archive>
+              <manifest>
+                <addClasspath>true</addClasspath>
+                <mainClass>server.ServerLauncher</mainClass>
+              </manifest>
+            </archive>
+            <includes>
+              <include>**/server/**</include>
+            </includes>
+          </configuration>
+        </execution>
+        <!-- Client jar -->
+        <execution>
+          <id>client-jar</id>
+          <phase>package</phase>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+          <configuration>
+            <classifier>client</classifier>
+            <archive>
+              <manifest>
+                <addClasspath>true</addClasspath>
+                <mainClass>client.ClientLauncher</mainClass>
+              </manifest>
+            </archive>
+            <includes>
+              <include>**/client/**</include>
+            </includes>
+          </configuration>
+        </execution>
+      </executions>
+
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>

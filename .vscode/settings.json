@@ -13,6 +13,6 @@
         "/home/mikael/Documents/Programmation/Java/JavaFX/javafx-sdk-20/lib/javafx-swt.jar"
         
     ],
-    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.configuration.updateBuildConfiguration": "automatic",
     "java.debug.settings.onBuildFailureProceed": true
 }
